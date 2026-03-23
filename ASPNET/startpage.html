@@ -1,0 +1,383 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Startpage</title>
+</head>
+<body>
+    <style>
+        body {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                url('https://img.freepik.com/premium-photo/futuristic-soldier-with-helmet-night-with-copy-space-gaming-background_758367-159074.jpg?semt=ais_hybrid&w=740&q=80');
+            background-attachment: fixed;
+            background-size: cover;
+        }
+        .container{
+            background-color: rgba(128,128,128,0.7);
+            backdrop-filter: blur(10px);
+            margin: 50px auto;
+            padding: 20px 40px;
+            width: 80%;
+            max-width: 900px;
+            min-height: 600px;
+            color: blue;
+        }
+        .container > *{
+            text-align: center;
+        }
+        .container > h1{
+            font-size: 50px;
+            letter-spacing: 3px;
+            box-sizing: border-box;
+        }
+        .choise-container {
+            display: flex;
+            padding: 10px;
+            justify-content: center;
+            gap: 50px;
+        }
+        .choise-item {
+            border-radius: 10px;
+            width: 100px;
+            height: 100px;
+            background-color: orange;
+            padding: 10px;
+            opacity: 0.8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .choise-item:hover{
+            background-color: darkorange;
+        }
+        .games-container{
+            display: flex;
+            overflow-y: auto;
+            gap: 20px;
+            flex-wrap: wrap;
+            padding: 20px;
+        }
+        .game-item {
+            overflow: hidden;
+            border-radius: 15px;
+            width: 200px;
+            height: 300px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .game-item:hover{
+            transform: scale(1.1, 1.1);
+        }
+
+        .game-item > img {
+            object-fit: cover;
+            height:100%;
+            object-position: top;
+        }
+
+        .game-item > div {
+            padding: 10px 3px;
+            position: absolute;
+            background-color: darkgray;
+            opacity: 0.9;
+            z-index: 1;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .game-item > div > *{
+            opacity: initial;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+        .option-item {
+            margin: 5px;
+            text-align: left;
+            background-color: darkgray;
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            overflow-x: hidden;
+            padding: 10px;
+            transition: all 0.4s ease-out;
+            display: flex;
+            gap: 20px;
+            justify-content: flex-start;
+        }
+        .option-item:hover {
+            width: calc(100% - 20px);
+            overflow-x: auto;
+            height: auto;
+        }
+        .selectedGame-container{
+            padding: 10px;
+            display: flex;
+        }
+        .selectedGame-container > *{
+            flex: 1 1 0;
+            min-width: 0;
+        }
+        .selectedGame-container img{
+            padding: 5px;
+        }
+        .selectedGame-container div{
+            display: flex;
+            padding: 10px;
+            flex-direction: column;
+            font-size: 30px;
+            justify-content: space-between;
+        }
+        .selectedGame-container div span{
+            word-wrap: anywhere;
+        }
+        #stopEdit__btn{
+            display: none;
+            padding: 5px;
+            border-radius: 5px;
+            background-color: firebrick;
+        }
+    </style>
+    <div class="container">
+        <h1>Магазин игр</h1>
+        <div class="choise-container">
+            <div class="choise-item" id="showAllGames">
+                Список игр
+            </div>
+            <div class="choise-item" id="addGame">
+                Добавить игру
+            </div>
+        </div>
+        <div class="option-item">
+            <svg style="flex: 0 0 50px" xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-file-earmark-plus" viewBox="0 0 16 16">
+                <path d="M8 6.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V11a.5.5 0 0 1-1 0V9.5H6a.5.5 0 0 1 0-1h1.5V7a.5.5 0 0 1 .5-.5z" />
+                <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z" />
+            </svg>
+            <button id="stopEdit__btn">Остановить редактирование</button>
+            <input id="genreParameter" placeholder="Genre" style="padding: 0 3px;" />
+            <input id="authorParameter" placeholder="Author" style="padding: 0 3px;" />
+            <input id="releaseParameter" placeholder="Release" style="padding: 0 3px;" />
+            <input id="nameParameter" placeholder="Name" style="padding: 0 3px;" />
+            <input id="posterParameter" placeholder="Poster (non required)" style="padding: 0 3px;" />
+        </div>
+        <div class="option-item">
+            <svg style="flex: 0 0 50px" xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-funnel" viewBox="0 0 16 16">
+                <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z" />
+            </svg>
+            <input id="genreFilter" placeholder="Genre" style="padding: 0 3px;"/>
+            <input id="authorFilter" placeholder="Author" style="padding: 0 3px;"/>
+        </div>
+        <div class="games-container">
+
+        </div>
+        <div class="selectedGame-container" id="currentGame">
+
+        </div>
+    </div>
+    <script>
+        document.getElementById('showAllGames').addEventListener('click', async () => {
+            RequestShowGames();
+        });
+        document.getElementById('stopEdit__btn').addEventListener('click', () => UnsetEditGameState());
+        document.getElementById('addGame').addEventListener('click', async () => {
+            let name = document.getElementById('nameParameter').value;
+            let author = document.getElementById('authorParameter').value;
+            let release = document.getElementById('releaseParameter').value;
+            let genre = document.getElementById('genreParameter').value;
+            let poster = document.getElementById('posterParameter').value;
+            if (name == "" || author == "" ||
+                release == "" || genre == "")
+            {
+                alert('Введите данные')
+                return;
+            }
+            let urlParts = [
+                encodeURIComponent(name),
+                encodeURIComponent(author),
+                encodeURIComponent(release),
+                encodeURIComponent(genre)
+            ];
+            if (poster !== ""){
+                urlParts.push(encodeURIComponent(poster));
+            }
+            if (currentGameId) {
+                urlParts.unshift(encodeURIComponent(currentGameId));
+                urlParts.unshift('game');
+                let response = await fetch(urlParts.join('/'), { method: "PUT" });
+                if (response.ok) {
+                    selectedGameContainer.replaceChildren();
+                    gamesContainer.replaceChildren();
+                    RequestShowGames();
+                    window.location.href = '#addGame';
+                }
+                else
+                    alert('Не удалось изменить');
+                UnsetEditGameState();
+                return;
+            }
+            urlParts.unshift('game');
+            let response = await fetch(urlParts.join('/'), { method: "POST" });
+            if (response.ok) {
+                selectedGameContainer.replaceChildren();
+                gamesContainer.replaceChildren();
+                RequestShowGames();
+                window.location.href = '#addGame';
+            }
+            else
+                alert('Не удалось добавить');
+        });
+        const gamesContainer = document.querySelector('.games-container');
+        const selectedGameContainer = document.querySelector('.selectedGame-container');
+        let currentGameId;
+
+        function SetEditGameState(gameId) {
+            currentGameId = gameId;
+            document.getElementById('addGame').style.backgroundColor = 'green';
+            document.getElementById('stopEdit__btn').style.display = 'inline-block';
+            document.getElementById('addGame').textContent = 'Изменить игру';
+        }
+        function UnsetEditGameState() {
+            currentGameId = undefined;
+            document.getElementById('stopEdit__btn').style.display = 'none';
+            document.getElementById('addGame').style.backgroundColor = 'orange';
+            document.getElementById('addGame').textContent = 'Добавить игру';
+        }
+        async function RequestShowGames() {
+            let url = new URL("/games", window.location.origin);
+            const genre = document.getElementById('genreFilter');
+            const author = document.getElementById('authorFilter');
+            if (genre.value !== "")
+                url.searchParams.append("genre", genre.value);
+            if (author.value !== "")
+                url.searchParams.append("author", author.value);
+            var response = await fetch(url);
+            if (!response.ok)
+                return;
+            var data = await response.json();
+            ShowGames(data);
+        }
+
+        function ShowGames(list) {
+            gamesContainer.replaceChildren();
+            selectedGameContainer.replaceChildren();
+            if (list.length == 0) {
+                gamesContainer.textContent = 'No games found';
+                return;
+            }
+            for (game of list) {
+                gamesContainer.appendChild((() => {
+                    const div = document.createElement('div');
+                    div.className = 'game-item';
+                    div.dataset.gameid = game.id;
+                    div.addEventListener('click', async (e) => {
+                        let response = await fetch(`/game/${e.currentTarget.dataset.gameid}`);
+                        let data = await response.json();
+                        window.location.href = '#currentGame';
+                        selectedGameContainer.replaceChildren();
+                        selectedGameContainer.appendChild((() => {
+                            const img = document.createElement('img');
+                            img.src = data.poster;
+                            return img;
+                        })())
+                        selectedGameContainer.appendChild((() => {
+                            const desc = document.createElement('div');
+                            desc.appendChild((() => {
+                                const name = document.createElement('span');
+                                name.textContent = `Name: ${data.name}`;
+                                return name;
+                            })());
+                            desc.appendChild((() => {
+                                const year = document.createElement('span');
+                                year.textContent = `Release: ${data.releaseYear}`;
+                                return year;
+                            })());
+                            desc.appendChild((() => {
+                                const author = document.createElement('span');
+                                author.textContent = `Author: ${data.author}`;
+                                return author;
+                            })());
+                            desc.appendChild((() => {
+                                const genre = document.createElement('span');
+                                genre.textContent = `Genre: ${data.genre}`;
+                                return genre;
+                            })());
+                            desc.appendChild((() => {
+                                const id = document.createElement('span');
+                                id.textContent = `Id: ${data.id}`;
+                                return id;
+                            })());
+                            desc.appendChild((() => {
+                                const posterAddress = document.createElement('span');
+                                posterAddress.textContent = `Poster: ${data.poster}`;
+                                return posterAddress;
+                            })());
+                            desc.appendChild((() => {
+                                const deleteButton = document.createElement('button');
+                                deleteButton.textContent = `Удалить`;
+                                deleteButton.addEventListener('click',async () => {
+                                    let response = await fetch(`/game/${data.id}`, {
+                                        method: 'DELETE'
+                                    });
+                                    if (response.ok) {
+                                        selectedGameContainer.replaceChildren();
+                                        RequestShowGames();
+                                    }
+                                    else
+                                        alert('Не удалось удалить игру');
+                                })
+                                return deleteButton;
+                            })());
+                            desc.appendChild((() => {
+                                const deleteButton = document.createElement('button');
+                                deleteButton.textContent = `Изменить`;
+                                deleteButton.addEventListener('click', () => {
+                                    SetEditGameState(data.id);
+                                    document.getElementById('nameParameter').value = data.name;
+                                    document.getElementById('authorParameter').value = data.author;
+                                    document.getElementById('releaseParameter').value = data.releaseYear;
+                                    document.getElementById('genreParameter').value = data.genre;
+                                    document.getElementById('posterParameter').value = data.poster;
+                                    window.location.href = '#addGame';
+                                })
+                                return deleteButton;
+                            })());
+                            return desc;
+                        })());
+                    })
+                    div.style.display = 'flex';
+                    div.style.flexDirection = 'column';
+                    div.appendChild((() => {
+                        const poster = document.createElement('img');
+                        poster.src = game.poster;
+                        return poster;
+                    })());
+                    div.appendChild((() => {
+                        const desc = document.createElement('div');
+                        desc.style.flexDirection = 'column';
+                        desc.appendChild((() => {
+                            const name = document.createElement('span');
+                            name.textContent = game.name;
+                            return name;
+                        })());
+                        desc.appendChild((() => {
+                            const author = document.createElement('span');
+                            author.textContent = game.author;
+                            return author;
+                        })());
+                        desc.appendChild((() => {
+                            const genre = document.createElement('span');
+                            genre.textContent = game.genre;
+                            return genre;
+                        })());
+
+                        return desc;
+                    })());
+                    return div;
+                })());
+            }
+        }
+    </script>
+</body>
+</html>
