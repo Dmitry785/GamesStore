@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ASPNET.Application.Services;
+using ASPNET.Application.Services.Interfaces;
+using ASPNET.Domain.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ASPNET
 {
@@ -13,7 +16,7 @@ namespace ASPNET
             app.UseStaticFiles();
 
 
-            app.MapGet("game/{id:guid}", (Guid id, GamesDataStorageService service) =>
+            app.MapGet("game/{id:guid}", (Guid id, IGameService service) =>
             {
                 Console.WriteLine("get");
                 var game = service.Read().FirstOrDefault(x => x.Id.Equals(id));
@@ -21,26 +24,26 @@ namespace ASPNET
                     return Results.NotFound();
                 return Results.Json(game);
             });
-            app.MapPost("/game", ([FromBody] GameInfo game, GamesDataStorageService service) =>
+            app.MapPost("/game", ([FromBody] GameInfo game, IGameService service) =>
             {
                 Console.WriteLine("post");
                 service.Create(game);
                 return Results.Ok();
             });
-            app.MapPut("/game", ([FromBody] GameInfo game, GamesDataStorageService service) =>
+            app.MapPut("/game", ([FromBody] GameInfo game, IGameService service) =>
             {
                 Console.WriteLine("put");
                 if (!service.Update(game))
                     return Results.NotFound();
                 return Results.Ok();
             });
-            app.MapDelete("/game", ([FromBody] Guid id, GamesDataStorageService service) =>
+            app.MapDelete("/game", ([FromBody] Guid id, IGameService service) =>
             {
                 Console.WriteLine($"delete {id}");
                 var game = service.Read().FirstOrDefault(x => x.Id.Equals(id));
                 if (game is null)
                     return Results.NotFound();
-                if (!service.Delete(game))
+                if (!service.Delete(game.Id))
                     return Results.NotFound();
                 return Results.Ok();
             });
@@ -48,22 +51,22 @@ namespace ASPNET
         }
         public static WebApplication AddDatedRouting(this WebApplication app)
         {
-            app.MapGet("/game/{id:guid}", (Guid id, GamesDataStorageService adapter) =>
+            app.MapGet("/game/{id:guid}", (Guid id, IGameService adapter) =>
             {
                 var game = adapter.Read().FirstOrDefault(x => x.Id.Equals(id));
                 if (game is null)
                     return Results.NotFound();
                 return Results.Json(game);
             });
-            app.MapDelete("/game/{id:guid}", (Guid id, GamesDataStorageService adapter) =>
+            app.MapDelete("/game/{id:guid}", (Guid id, IGameService adapter) =>
             {
                 var game = adapter.Read().FirstOrDefault(x => x.Id.Equals(id));
-                if (game is not null && adapter.Delete(game))
+                if (game is not null && adapter.Delete(game.Id))
                     return Results.Ok();
                 return Results.NotFound();
             });
             app.MapPost("/game/{name}/{author}/{release:int}/{genre}/{poster?}", (string name, string author,
-                int release, string genre, string? poster, GamesDataStorageService adapter) =>
+                int release, string genre, string? poster, IGameService adapter) =>
             {
                 if (poster is not null)
                     poster = Uri.UnescapeDataString(poster);
@@ -72,7 +75,7 @@ namespace ASPNET
             });
 
             app.MapPut("/game/{id:guid}/{name}/{author}/{release:int}/{genre}/{poster?}", (Guid id, string name, string author,
-                int release, string genre, string? poster, GamesDataStorageService adapter) =>
+                int release, string genre, string? poster, IGameService adapter) =>
             {
                 if (poster is not null)
                     poster = Uri.UnescapeDataString(poster);

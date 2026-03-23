@@ -1,4 +1,4 @@
-﻿namespace ASPNET
+﻿namespace ASPNET.Domain.Models
 {
     public class GameInfo
     {
@@ -20,17 +20,6 @@
             ReleaseYear = year;
             Genre = genre;
             Poster = poster;
-        }
-        public override bool Equals(object? obj)
-        {
-            if (obj is not GameInfo gameInfo)
-                return false;
-            return this.Name == gameInfo.Name &&
-                this.Author == gameInfo.Author &&
-                this.Poster == gameInfo.Poster &&
-                this.ReleaseYear == gameInfo.ReleaseYear &&
-                this.Genre == gameInfo.Genre &&
-                this.Id.Equals(gameInfo.Id);
         }
     }
 }
