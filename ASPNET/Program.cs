@@ -1,4 +1,4 @@
-using System.Runtime.Serialization.Formatters.Binary;
+п»їusing System.Runtime.Serialization.Formatters.Binary;
 using System.Text.Json;
 using ASPNET;
 using ASPNET.Application.Interfaces;
@@ -32,7 +32,7 @@ namespace WebApplication1
             {
                 WebRootPath = "StaticFiles"
             });
-            //задание 3
+            //Р·Р°РґР°РЅРёРµ 3
             //builder.Services.AddFileDataStorage();
             //builder.Services.AddSqlDataStorage(builder.Configuration);
             builder.Services.AddSqlDataStorage();
@@ -56,12 +56,12 @@ namespace WebApplication1
                     Genre = x.Genre, Author = x.Author, Id = x.Id });
                 return Results.Json(filteredGames);
             });
-            //для 2 задания
-            //добавлены staticfiles и json отправка
+            //РґР»СЏ 2 Р·Р°РґР°РЅРёСЏ
+            //РґРѕР±Р°РІР»РµРЅС‹ staticfiles Рё json РѕС‚РїСЂР°РІРєР°
             app.AddAdvancedRouting();
 
-            //для 1 задания
-            //отправка в теле запроса
+            //РґР»СЏ 1 Р·Р°РґР°РЅРёСЏ
+            //РѕС‚РїСЂР°РІРєР° РІ С‚РµР»Рµ Р·Р°РїСЂРѕСЃР°
             //app.AddDatedRouting();
             app.Run();
         }
