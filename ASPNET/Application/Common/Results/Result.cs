@@ -14,5 +14,20 @@ namespace ASPNET.Application.Common.Results
         }
         public static Result Ok() => new Result(true, null);
         public static Result Fail(string error) => new Result(false, error);
+        public static Result<T> Ok<T>(T data) => Result<T>.Ok(data);
+    }
+    public class Result<T> : Result
+    {
+        protected T? data;
+
+        public T? Data => success ? data : default;
+
+        protected Result(bool success, T? data, string? error) : base(success, error)
+        {
+            this.data = data;
+        }
+        public static Result<T> Ok(T data) => new Result<T>(true, data, null);
+        public new static Result<T> Fail(string error)
+        => new Result<T>(false, default, error);
     }
 }

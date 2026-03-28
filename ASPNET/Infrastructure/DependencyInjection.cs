@@ -11,7 +11,7 @@ namespace ASPNET.Infrastructure
             var gamesDataStorage = new FileGamesDataStorage("data.txt");
             gamesDataStorage.Initialize();
 
-            services.AddSingleton<IGamesDataStorage>(gamesDataStorage);
+            services.AddScoped<IGamesDataStorage>(provider => gamesDataStorage);
             return services;
         }
         public static IServiceCollection AddSqlDataStorage(this IServiceCollection services, IConfiguration configuration)
