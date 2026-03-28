@@ -1,4 +1,4 @@
-﻿using ASPNET.Application.Interfaces;
+using ASPNET.Application.Interfaces;
 using ASPNET.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,11 +12,11 @@ namespace ASPNET.Infrastructure
         {
             Database.EnsureCreated();
         }
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        /*protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=Games;Trusted_Connection=True;");
             base.OnConfiguring(optionsBuilder);
-        }
+        }*/
         public new async Task SaveChangesAsync(CancellationToken token)
         {
             await base.SaveChangesAsync(token);

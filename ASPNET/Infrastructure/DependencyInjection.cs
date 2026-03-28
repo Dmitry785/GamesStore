@@ -1,4 +1,4 @@
-﻿using ASPNET.Application.Interfaces;
+using ASPNET.Application.Interfaces;
 using ASPNET.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,20 +14,19 @@ namespace ASPNET.Infrastructure
             services.AddSingleton<IGamesDataStorage>(gamesDataStorage);
             return services;
         }
-        public static IServiceCollection AddSqlDataStorage(this IServiceCollection services)
+        /*public static IServiceCollection AddSqlDataStorage(this IServiceCollection services)
         {
             var gamesDataStorage = new AppDbContext();
 
             services.AddSingleton<IGamesDataStorage, AppDbContext>();
             return services;
-        }
-        /*public static IServiceCollection AddSqlDataStorage(this IServiceCollection services, IConfiguration configuration)
+        }*/
+        public static IServiceCollection AddSqlDataStorage(this IServiceCollection services, IConfiguration configuration)
         {
             var connectionString = configuration.GetConnectionString("Games");
-            Console.WriteLine(connectionString);
             services.AddDbContext<AppDbContext>(x => x.UseSqlServer(connectionString));
-            services.AddSingleton<IGamesDataStorage>(provider => provider.GetRequiredService<AppDbContext>());
+            services.AddScoped<IGamesDataStorage>(provider => provider.GetRequiredService<AppDbContext>());
             return services;
-        }*/
+        }
     }
 }

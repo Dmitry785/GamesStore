@@ -1,4 +1,4 @@
-﻿using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text.Json;
 using ASPNET;
 using ASPNET.Application.Interfaces;
@@ -34,18 +34,24 @@ namespace WebApplication1
             });
             //задание 3
             //builder.Services.AddFileDataStorage();
-            //builder.Services.AddSqlDataStorage(builder.Configuration);
-            builder.Services.AddSqlDataStorage();
+            builder.Services.AddSqlDataStorage(builder.Configuration);
+            //builder.Services.AddSqlDataStorage();
             builder.Services.AddApplicationLayer();
 
             var app = builder.Build();
 
-            var dataStorage = app.Services.GetRequiredService<IGamesDataStorage>();
-            if (dataStorage.Games.Count() == 0)
+            /*var dataStorage = app.Services.GetRequiredService<IGamesDataStorage>();
+             if (dataStorage.Games.Count() == 0)
+             {
+                 dataStorage.Games.AddRange(defaultGames);
+                 dataStorage.SaveChangesAsync(default);
+             }
+            var dataStorage = app.Services.GetRequiredService<IGameService>();
+            if (dataStorage.Read().Result.Count == 0)
             {
-                dataStorage.Games.AddRange(defaultGames);
-                dataStorage.SaveChangesAsync(default);
-            }
+                foreach (var game in defaultGames)
+                    dataStorage.Create(game);
+            }*/
 
             app.MapGet("/games", async (string? genre, string? author, IGameService adapter) =>
             {
