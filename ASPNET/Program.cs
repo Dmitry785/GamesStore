@@ -14,7 +14,7 @@ namespace WebApplication1
 {
     public class Program
     {
-        const bool USE_FILE_DS = false;
+        const bool USE_FILE_DS = true;
         const bool USE_PARAMS_IN_BODY = false;
         public static void Main(string[] args)
         {
@@ -35,7 +35,6 @@ namespace WebApplication1
             {
                 WebRootPath = "StaticFiles"
             });
-            //задание 3
             if(USE_FILE_DS)
                 builder.Services.AddFileDataStorage();
             else
@@ -47,19 +46,11 @@ namespace WebApplication1
             var scopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
             var scope = scopeFactory.CreateScope();
             var dataStorage = scope.ServiceProvider.GetRequiredService<IGamesDataStorage>();
-            //var dataStorage = app.Services.GetRequiredService<IGamesDataStorage>();
             if (dataStorage.Games.Count() == 0)
             {
                 dataStorage.Games.AddRange(defaultGames);
                 dataStorage.SaveChangesAsync(default);
             }
-            //var dataStorage = app.Services.GetRequiredService<IGameService>();
-            //if (dataStorage.Read().Result.Count == 0)
-            //{
-            //    foreach (var game in defaultGames)
-            //        dataStorage.Create(game);
-            //}
-
             app.MapGet("/games", async (string? genre, string? author, IGameService adapter) =>
             {
                 var filteredGames = (await adapter.Read()).Where(x =>
