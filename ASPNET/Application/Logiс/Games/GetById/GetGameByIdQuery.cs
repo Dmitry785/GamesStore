@@ -2,7 +2,7 @@ using ASPNET.Application.Common.Results;
 using ASPNET.Domain.Models;
 using MediatR;
 
-namespace ASPNET.Application.Login.Games.GetById
+namespace ASPNET.Application.Logic.Games.GetById
 {
     public record GetGameByIdQuery(Guid gameId) : IRequest<Result<GameInfo>>;
 }

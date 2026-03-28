@@ -6,7 +6,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace ASPNET.Application.Login.Groups.Create
+namespace ASPNET.Application.Logic.Games.Create
 {
     public class CreateGameCommandHandler(
     IGamesDataStorage dbContext,

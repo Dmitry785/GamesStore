@@ -1,6 +1,4 @@
 using ASPNET.Application.Interfaces;
-using ASPNET.Application.Services;
-using ASPNET.Application.Services.Interfaces;
 using ASPNET.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
@@ -11,7 +9,11 @@ namespace ASPNET
     {
         public static IServiceCollection AddApplicationLayer(this IServiceCollection services)
         {
-            services.AddScoped<IGameService, GameService>();
+            services.AddMediatR(cfg =>
+            {
+                cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+            });
+
             return services;
         }
     }

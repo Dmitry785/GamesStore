@@ -4,7 +4,7 @@ using ASPNET.Domain.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace ASPNET.Application.Login.Games.Read
+namespace ASPNET.Application.Logic.Games.Read
 {
     public class ReadGamesQueryHandler(IGamesDataStorage dbContext,
         ILogger<ReadGamesQueryHandler> logger) : IRequestHandler<ReadGamesQuery, Result<List<GameInfo>>>

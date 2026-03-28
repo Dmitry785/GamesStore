@@ -1,4 +1,4 @@
-namespace ASPNET.Application.Login.Groups.Models
+namespace ASPNET.Application.Logic.Games.Models
 {
     public class GroupDto
     {

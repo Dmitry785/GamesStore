@@ -2,10 +2,10 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text.Json;
 using ASPNET;
 using ASPNET.Application.Interfaces;
-using ASPNET.Application.Services;
-using ASPNET.Application.Services.Interfaces;
+using ASPNET.Application.Logic.Games.Read;
 using ASPNET.Domain.Models;
 using ASPNET.Infrastructure;
+using MediatR;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 #pragma warning disable CS0162
@@ -14,7 +14,7 @@ namespace WebApplication1
 {
     public class Program
     {
-        const bool USE_FILE_DS = false;
+        const bool USE_FILE_DS = true;
         const bool USE_PARAMS_IN_BODY = false;
         public static void Main(string[] args)
         {
@@ -47,22 +47,19 @@ namespace WebApplication1
             var scopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
             var scope = scopeFactory.CreateScope();
             var dataStorage = scope.ServiceProvider.GetRequiredService<IGamesDataStorage>();
-            //var dataStorage = app.Services.GetRequiredService<IGamesDataStorage>();
             if (dataStorage.Games.Count() == 0)
             {
                 dataStorage.Games.AddRange(defaultGames);
                 dataStorage.SaveChangesAsync(default);
             }
-            //var dataStorage = app.Services.GetRequiredService<IGameService>();
-            //if (dataStorage.Read().Result.Count == 0)
-            //{
-            //    foreach (var game in defaultGames)
-            //        dataStorage.Create(game);
-            //}
 
-            app.MapGet("/games", async (string? genre, string? author, IGameService adapter) =>
+            app.MapGet("/games", async (string? genre, string? author, IMediator mediator) =>
             {
-                var filteredGames = (await adapter.Read()).Where(x =>
+                var result = await mediator.Send(new ReadGamesQuery());
+                if (result.Failed)
+                    return Results.BadRequest();
+
+                var filteredGames = result.Data!.Where(x =>
                     (genre is null ? true : x.Genre.ToLower().Contains(genre.ToLower())) &&
                     (author is null ? true : x.Author.ToLower().Contains(author.ToLower()))
                 ).Select(x => new GameInfo{ Name = x.Name, Poster = x.Poster,

@@ -1,13 +1,12 @@
 using ASPNET.Application.Common.Results;
 using ASPNET.Application.Interfaces;
-using ASPNET.Application.Login.Groups.Create;
 using MediatR;
 
-namespace ASPNET.Application.Login.Groups.Delete
+namespace ASPNET.Application.Logic.Games.Delete
 {
     public class DeleteGameCommandHandler(
     IGamesDataStorage dbContext,
-    ILogger<CreateGameCommandHandler> logger) : IRequestHandler<DeleteGameCommand, Result>
+    ILogger<DeleteGameCommandHandler> logger) : IRequestHandler<DeleteGameCommand, Result>
     {
         public async Task<Result> Handle(DeleteGameCommand request, CancellationToken cancellationToken)
         {

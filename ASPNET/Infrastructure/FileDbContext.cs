@@ -1,4 +1,4 @@
-﻿using ASPNET.Application.Interfaces;
+using ASPNET.Application.Interfaces;
 using ASPNET.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;

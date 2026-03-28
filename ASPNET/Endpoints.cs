@@ -1,6 +1,9 @@
-﻿using ASPNET.Application.Services;
-using ASPNET.Application.Services.Interfaces;
+using ASPNET.Application.Logic.Games.GetById;
+using ASPNET.Application.Logic.Games.Create;
+using ASPNET.Application.Logic.Games.Delete;
+using ASPNET.Application.Logiс.Games.Update;
 using ASPNET.Domain.Models;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ASPNET
@@ -16,27 +19,29 @@ namespace ASPNET
             app.UseStaticFiles();
 
 
-            app.MapGet("game/{id:guid}", async (Guid id, IGameService service) =>
+            app.MapGet("game/{id:guid}", async (Guid id, IMediator mediator) =>
             {
-                var game = await service.GetById(id);
-                if (game is null)
+                var result = await mediator.Send(new GetGameByIdQuery(id));
+                if (result.Failed)
                     return Results.NotFound();
-                return Results.Json(game);
+                return Results.Json(result.Data!);
             });
-            app.MapPost("/game", async ([FromBody] GameInfo game, IGameService service) =>
+            _ = app.MapPost("/game", async ([FromBody] GameInfo game, IMediator mediator) =>
             {
-                await service.Create(game);
+                await mediator.Send(new CreateGameCommand(game));
                 return Results.Ok();
             });
-            app.MapPut("/game", async ([FromBody] GameInfo game, IGameService service) =>
+            app.MapPut("/game", async ([FromBody] GameInfo game, IMediator mediator) =>
             {
-                if (!await service.Update(game))
+                var result = await mediator.Send(new UpdateGameCommand(game));
+                if(result.Failed)
                     return Results.NotFound();
                 return Results.Ok();
             });
-            app.MapDelete("/game", async ([FromBody] Guid id, IGameService service) =>
+            app.MapDelete("/game", async ([FromBody] Guid id, IMediator mediator) =>
             {
-                if (!await service.Delete(id))
+                var result = await mediator.Send(new DeleteGameCommand(id));
+                if(result.Failed)
                     return Results.NotFound();
                 return Results.Ok();
             });
@@ -44,38 +49,40 @@ namespace ASPNET
         }
         public static WebApplication AddDatedRouting(this WebApplication app)
         {
-            app.MapGet("/game/{id:guid}", async (Guid id, IGameService adapter) =>
+            app.MapGet("/game/{id:guid}", async (Guid id, IMediator mediator) =>
             {
-                var game = await adapter.GetById(id);
-                if (game is null)
+                var result = await mediator.Send(new GetGameByIdQuery(id));
+                if (result.Failed)
                     return Results.NotFound();
-                return Results.Json(game);
+                return Results.Json(result.Data!);
             });
-            app.MapDelete("/game/{id:guid}", async (Guid id, IGameService adapter) =>
+            app.MapDelete("/game/{id:guid}", async (Guid id, IMediator mediator) =>
             {
-                if (await adapter.Delete(id))
-                    return Results.Ok();
-                return Results.NotFound();
+                var result = await mediator.Send(new DeleteGameCommand(id));
+                if (result.Failed)
+                    return Results.NotFound();
+                return Results.Ok();
             });
             app.MapPost("/game/{name}/{author}/{release:int}/{genre}/{poster?}", async (string name, string author,
-                int release, string genre, string? poster, IGameService adapter) =>
+                int release, string genre, string? poster, IMediator mediator) =>
             {
                 if (poster is not null)
                     poster = Uri.UnescapeDataString(poster);
-                await adapter.Create(new GameInfo(Guid.NewGuid(), name, author, release, genre, poster));
+                var result = await mediator.Send(new CreateGameCommand(name, author, release, genre, poster));
+                if (result.Failed)
+                    return Results.BadRequest();
                 return Results.Ok();
             });
 
             app.MapPut("/game/{id:guid}/{name}/{author}/{release:int}/{genre}/{poster?}", async (Guid id, string name, string author,
-                int release, string genre, string? poster, IGameService adapter) =>
+                int release, string genre, string? poster, IMediator mediator) =>
             {
                 if (poster is not null)
                     poster = Uri.UnescapeDataString(poster);
-                if (await adapter.Update(new GameInfo(id, name, author, release, genre, poster)))
-                {
-                    return Results.Ok();
-                }
-                return Results.NotFound();
+                var result = await mediator.Send(new UpdateGameCommand(id, name, author, release, genre, poster));
+                if (result.Failed)
+                    return Results.NotFound();
+                return Results.Ok();
             });
             app.MapGet("/", async (context) =>
             {
