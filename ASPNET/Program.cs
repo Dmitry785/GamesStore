@@ -2,6 +2,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text.Json;
 using ASPNET;
 using ASPNET.Application.Interfaces;
+using ASPNET.Application.Logic.Games.Models;
 using ASPNET.Application.Logic.Games.Read;
 using ASPNET.Domain.Models;
 using ASPNET.Infrastructure;
@@ -14,7 +15,7 @@ namespace WebApplication1
 {
     public class Program
     {
-        const bool USE_FILE_DS = true;
+        const bool USE_FILE_DS = false;
         const bool USE_PARAMS_IN_BODY = false;
         public static void Main(string[] args)
         {
@@ -62,8 +63,7 @@ namespace WebApplication1
                 var filteredGames = result.Data!.Where(x =>
                     (genre is null ? true : x.Genre.ToLower().Contains(genre.ToLower())) &&
                     (author is null ? true : x.Author.ToLower().Contains(author.ToLower()))
-                ).Select(x => new GameInfo{ Name = x.Name, Poster = x.Poster,
-                    Genre = x.Genre, Author = x.Author, Id = x.Id });
+                );
                 return Results.Json(filteredGames);
             });
             if(USE_PARAMS_IN_BODY)

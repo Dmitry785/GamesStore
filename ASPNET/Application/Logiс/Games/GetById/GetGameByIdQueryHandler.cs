@@ -1,5 +1,6 @@
 using ASPNET.Application.Common.Results;
 using ASPNET.Application.Interfaces;
+using ASPNET.Application.Logic.Games.Models;
 using ASPNET.Domain.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
