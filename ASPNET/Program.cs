@@ -8,11 +8,14 @@ using ASPNET.Domain.Models;
 using ASPNET.Infrastructure;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
+#pragma warning disable CS0162
 
 namespace WebApplication1
 {
     public class Program
     {
+        const bool USE_FILE_DS = false;
+        const bool USE_PARAMS_IN_BODY = false;
         public static void Main(string[] args)
         {
             var defaultGames = new List<GameInfo>()
@@ -33,9 +36,10 @@ namespace WebApplication1
                 WebRootPath = "StaticFiles"
             });
             //задание 3
-            //builder.Services.AddFileDataStorage();
-            builder.Services.AddSqlDataStorage(builder.Configuration);
-            //builder.Services.AddSqlDataStorage();
+            if(USE_FILE_DS)
+                builder.Services.AddFileDataStorage();
+            else
+                builder.Services.AddSqlDataStorage(builder.Configuration);
             builder.Services.AddApplicationLayer();
 
             var app = builder.Build();
@@ -62,13 +66,10 @@ namespace WebApplication1
                     Genre = x.Genre, Author = x.Author, Id = x.Id });
                 return Results.Json(filteredGames);
             });
-            //для 2 задания
-            //добавлены staticfiles и json отправка
-            app.AddAdvancedRouting();
-
-            //для 1 задания
-            //отправка в теле запроса
-            //app.AddDatedRouting();
+            if(USE_PARAMS_IN_BODY)
+                app.AddDatedRouting();
+            else
+                app.AddAdvancedRouting();
             app.Run();
         }
     }
