@@ -44,18 +44,21 @@ namespace WebApplication1
 
             var app = builder.Build();
 
-            /*var dataStorage = app.Services.GetRequiredService<IGamesDataStorage>();
-             if (dataStorage.Games.Count() == 0)
-             {
-                 dataStorage.Games.AddRange(defaultGames);
-                 dataStorage.SaveChangesAsync(default);
-             }
-            var dataStorage = app.Services.GetRequiredService<IGameService>();
-            if (dataStorage.Read().Result.Count == 0)
+            var scopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
+            var scope = scopeFactory.CreateScope();
+            var dataStorage = scope.ServiceProvider.GetRequiredService<IGamesDataStorage>();
+            //var dataStorage = app.Services.GetRequiredService<IGamesDataStorage>();
+            if (dataStorage.Games.Count() == 0)
             {
-                foreach (var game in defaultGames)
-                    dataStorage.Create(game);
-            }*/
+                dataStorage.Games.AddRange(defaultGames);
+                dataStorage.SaveChangesAsync(default);
+            }
+            //var dataStorage = app.Services.GetRequiredService<IGameService>();
+            //if (dataStorage.Read().Result.Count == 0)
+            //{
+            //    foreach (var game in defaultGames)
+            //        dataStorage.Create(game);
+            //}
 
             app.MapGet("/games", async (string? genre, string? author, IGameService adapter) =>
             {
