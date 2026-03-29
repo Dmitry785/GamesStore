@@ -14,8 +14,9 @@ namespace WebApplication1
 {
     public class Program
     {
-        const bool USE_FILE_DS = true;
+        const bool USE_FILE_DS = false;
         const bool USE_PARAMS_IN_BODY = false;
+        const bool USE_SWAGGER = false;//в разработке
         public static void Main(string[] args)
         {
             var defaultGames = new List<GameInfo>()
@@ -35,17 +36,28 @@ namespace WebApplication1
             {
                 WebRootPath = "StaticFiles"
             });
-            if(USE_FILE_DS)
+
+            if (USE_FILE_DS)
                 builder.Services.AddFileDataStorage();
             else
                 builder.Services.AddSqlDataStorage(builder.Configuration);
             builder.Services.AddApplicationLayer();
 
+            if (USE_SWAGGER)
+            {
+                builder.Services.AddSwaggerGen();
+            }
+
             var app = builder.Build();
 
-            var scopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
-            var scope = scopeFactory.CreateScope();
-            var dataStorage = scope.ServiceProvider.GetRequiredService<IGamesDataStorage>();
+            if (USE_SWAGGER)
+            {
+                app.UseSwagger()
+                app.UseSwaggerUI();
+            }
+
+            var dataStorage = app.Services.GetRequiredService<IServiceScopeFactory>()
+                .CreateScope().ServiceProvider.GetRequiredService<IGamesDataStorage>();
             if (dataStorage.Games.Count() == 0)
             {
                 dataStorage.Games.AddRange(defaultGames);
